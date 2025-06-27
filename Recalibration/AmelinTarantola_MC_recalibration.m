@@ -152,7 +152,7 @@ CDdiagPur = zeros(usedPurs*6,1);
 
 tic
 %% Start MC madness
-nM = 500;
+nM = 1e5; %500;
 ummat = zeros(totms,nM);
 twoSm = zeros(nM,1);
 mswds = zeros(nM,1);
@@ -612,8 +612,8 @@ end %for i = 1:totiters
 ummat(:,M) = um;
 twoSm(M) = (ufm-udobs)'*((ufm-udobs)./uCDd);  %eqn 5.141 of Tarantola InvPrblmTheory
 mswds(M) = twoSm(M)/(length(udobs)-1);
-dlmwrite('MCintercal.txt', [um' twoSm(M)], '-append', 'precision', '%12.12g')
-
+%dlmwrite('MCintercal.txt', [um' twoSm(M)], '-append', 'precision', '%12.12g')
+writematrix([um' twoSm(M)], 'Mcintercal2.txt', 'WriteMode', 'append')
 end %for M = 1:nM
 
 toc
