@@ -614,6 +614,7 @@ twoSm(M) = (ufm-udobs)'*((ufm-udobs)./uCDd);  %eqn 5.141 of Tarantola InvPrblmTh
 mswds(M) = twoSm(M)/(length(udobs)-1);
 %dlmwrite('MCintercal.txt', [um' twoSm(M)], '-append', 'precision', '%12.12g')
 writematrix([um' twoSm(M)], 'Mcintercal2.txt', 'WriteMode', 'append')
+if ~mod(M, 100), disp(num2str(M)), end
 end %for M = 1:nM
 
 toc

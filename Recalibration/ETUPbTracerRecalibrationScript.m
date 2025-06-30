@@ -20,23 +20,25 @@ load AmelinTarantolaData.mat
 % RECALIBRATION: Change the 208/206 of 981 on line 217, all Pb ICs are 
 % calibration to this one ratio (see Condon et al., 2015 for details)
 AmelinTarantola_Mean_recalibration
-
+umMaxLik = um; % save off maximum likelihood model vector
 
 tabCondonTable1 = uitab(tabGroupCondon, "Title", "Table 1");
-table1Condon = buildTable("Condon Table 1", um);
+table1Condon = buildTable("Condon Table 1", umMaxLik);
 uitable(tabCondonTable1, "Data", table1Condon, ...
-    "Units", "normalized", "Position", [0, 0, 1 1])
+    "Units", "normalized", "Position", [0, 0, 1 1]);
 
+% %3a. Perform Monte Carlo uncertainty propagation on the inverse problem, 
+% % to give the 208/206 of 981 the right expected value and uncertainty
+% %
+% % RECALIBRATION: Change the IC of NBS 981 and its uncertainty on lines
+% % 217 and 218. To do more MC trials, increase nM on line 155.
+% rng("shuffle") 
+% AmelinTarantola_MC_recalibration
 
-
-%3. Perform Monte Carlo uncertainty propagation on the inverse problem, 
-% to give the 208/206 of 981 the right expected value and uncertainty
-%
-% RECALIBRATION: Change the IC of NBS 981 and its uncertainty on lines
-% 217 and 218. To do more MC trials, increase nM on line 155.
-rng("shuffle") 
-AmelinTarantola_MC_recalibration
+% 3b. Parse MC intercalibration results, calculate measured and systematic
+% uncertainty contributions. Note: change input filenames if needed.
+parseMCintercal
 
 tabMcLeanTable3 = uitab(tabGroupMcLean, "Title", "Table 3");
 %create inputs for Table 3 of McLean
-%table3McLean = buildTable("McLean Table 3", 
+table3McLean = buildTable("McLean Table 3", umMaxLik, twosigmaM, twosigmaT);

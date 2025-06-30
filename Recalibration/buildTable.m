@@ -73,4 +73,28 @@ switch name
     tableOut.Properties.RowNames = rowNames;
     tableOut.Properties.VariableNames = ["JMM", "RP/GSC", "ET"];
 
+    case "McLean Table 3"
+
+    % input arguments: umMaxLik, twosigmaM, twosigmaT
+    umMaxLik = cell2mat(varargin(1));
+    twosigmaM = cell2mat(varargin(2));
+    twosigmaT = cell2mat(varargin(3));
+    
+    % Define row names and data for McLean Table 3
+    rowNames = [
+        "981 204Pb/206Pb"
+        "981 207Pb/206Pb"
+        "981 208Pb/206Pb"
+        "982 204Pb/206Pb"
+        "982 207Pb/206Pb"
+        "982 208Pb/206Pb"
+        "Pur. 204Pb/206Pb"
+        "Pur. 207Pb/206Pb"
+        "Pur. 208Pb/206Pb"];
+    dataMcLean = [umMaxLik, twosigmaM, twosigmaT];
+    
+    tableOut = table(dataMcLean);
+    tableOut.Properties.RowNames = rowNamesMcLean;
+    tableOut.Properties.VariableNames = ["Max Likelihood", "Two Sigma M", "Two Sigma T"];
+
 end
