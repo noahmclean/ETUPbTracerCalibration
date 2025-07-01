@@ -1,15 +1,19 @@
-data_nm1 = dlmread('MCintercal_nm1.txt');
-data_nm12 = dlmread('MCintercal_nm1-4.txt');
-%data_sb1 = dlmread('MCintercal_Seth1.txt');
-%data_sb22 = dlmread('MCintercal_Seth2-2.txt');
-data_sb23 = dlmread('MCintercal_Seth2-4.txt');
+% % Note: uncomment below for original datasets
+% data_nm1 = dlmread('MCintercal_nm1.txt');
+% data_nm12 = dlmread('MCintercal_nm1-4.txt');
+% %data_sb1 = dlmread('MCintercal_Seth1.txt');
+% %data_sb22 = dlmread('MCintercal_Seth2-2.txt');
+% data_sb23 = dlmread('MCintercal_Seth2-4.txt');
+% 
+% data1short = data_nm1(:,1:20)';
+% data2short = data_nm12(:,1:20)';
+% data3short = data_sb23(:,1:20)';
+% allDatashort = [data1short data2short data3short]';
+% allData = [data_nm1(:,1:(end-1))' data_nm12(:,1:(end-1))' data_sb23(:,1:(end-1))']';
+% %clear data*
 
-data1short = data_nm1(:,1:20)';
-data2short = data_nm12(:,1:20)';
-data3short = data_sb23(:,1:20)';
-allDatashort = [data1short data2short data3short]';
-allData = [data_nm1(:,1:(end-1))' data_nm12(:,1:(end-1))' data_sb23(:,1:(end-1))']';
-%clear data*
+dataRecalibration = dlmread('MCintercal2.txt');
+allData = dataRecalibration(:, 1:(end-1));
 
 covsys = cov(allData);
 rhosys = zeros(size(covsys));

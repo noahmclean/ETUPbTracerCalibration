@@ -152,7 +152,7 @@ CDdiagPur = zeros(usedPurs*6,1);
 
 tic
 %% Start MC madness
-nM = 1e5; %500;
+nM = 1e4; %500;
 ummat = zeros(totms,nM);
 twoSm = zeros(nM,1);
 mswds = zeros(nM,1);

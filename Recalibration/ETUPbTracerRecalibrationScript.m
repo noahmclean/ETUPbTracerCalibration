@@ -41,4 +41,7 @@ parseMCintercal
 
 tabMcLeanTable3 = uitab(tabGroupMcLean, "Title", "Table 3");
 %create inputs for Table 3 of McLean
-table3McLean = buildTable("McLean Table 3", umMaxLik, twosigmaM, twosigmaT);
+table3McLean = buildTable("McLean Table 3", ...
+    umMaxLik(12:20), twosigmaM(12:20), twosigmaT(12:20));
+uitable(tabMcLeanTable3, "Data", table3McLean, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);

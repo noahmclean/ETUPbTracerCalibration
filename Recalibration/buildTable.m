@@ -91,10 +91,32 @@ switch name
         "Pur. 204Pb/206Pb"
         "Pur. 207Pb/206Pb"
         "Pur. 208Pb/206Pb"];
-    dataMcLean = [umMaxLik, twosigmaM, twosigmaT];
+    nBlocks = [160; ""; ""; 160; ""; ""; 36; ""; ""];
+    umMaxColumn = formatColumn(umMaxLik, [7 6 4 7 6 6 7 6 5]);
+    twosigmaMColumn = formatColumn(twosigmaM, [7 6 4 7 6 6 7 6 5]);
+    twosigmaMColumn(3) = "-";
+    twosigmaTColumn = formatColumn(twosigmaT, [6 5 4 6 5 5 6 5 5]);
     
-    tableOut = table(dataMcLean);
-    tableOut.Properties.RowNames = rowNamesMcLean;
-    tableOut.Properties.VariableNames = ["Max Likelihood", "Two Sigma M", "Two Sigma T"];
+    tableOut = table(umMaxColumn, twosigmaMColumn, twosigmaTColumn, nBlocks);
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = ...
+        ["Wtd. Mean", "±2σᵃ", "±2σᵇ", "n (blocks)"];
 
 end
+
+
+%% Helper functions
+
+function stringVec = formatColumn(columnVec, numDigits)
+    
+    nRows = length(columnVec);
+    stringVec = strings(nRows, 1);
+    for iRow = 1:nRows
+        formatString = "%9." + num2str(numDigits(iRow)) + "f";
+        stringVec(iRow) = compose(formatString, columnVec(iRow));
+    end % for iRow
+
+end % formatColumn
+
+
+end % function buildTable
