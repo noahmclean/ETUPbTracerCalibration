@@ -51,3 +51,7 @@ tabMcLeanTable4 = uitab(tabGroupMcLean, "Title", "Table 4");
 table4McLean = buildTable("McLean Table 4", rhotot(12:20, 12:20));
 uitable(tabMcLeanTable4, "Data", table4McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
+
+% 4. Blank and tracer "minor Pb isotope" IC using linear regression with
+% overdispersion term to account for Pb blank IC variability
+
