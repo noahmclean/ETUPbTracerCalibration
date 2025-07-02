@@ -45,3 +45,9 @@ table3McLean = buildTable("McLean Table 3", ...
     umMaxLik(12:20), twosigmaM(12:20), twosigmaT(12:20));
 uitable(tabMcLeanTable3, "Data", table3McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
+
+tabMcLeanTable4 = uitab(tabGroupMcLean, "Title", "Table 4");
+%create inputs for Table 3 of McLean
+table4McLean = buildTable("McLean Table 4", rhotot(12:20, 12:20));
+uitable(tabMcLeanTable4, "Data", table4McLean, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);

@@ -102,6 +102,38 @@ switch name
     tableOut.Properties.VariableNames = ...
         ["Wtd. Mean", "±2σᵃ", "±2σᵇ", "n (blocks)"];
 
+    case "McLean Table 4"
+    
+    rhotot = cell2mat(varargin);
+    rowNames = [
+        "981 204Pb/206Pb"
+        "981 207Pb/206Pb"
+        "981 208Pb/206Pb"
+        "982 204Pb/206Pb"
+        "982 207Pb/206Pb"
+        "982 208Pb/206Pb"
+        "Pur. 204Pb/206Pb"
+        "Pur. 207Pb/206Pb"
+        "Pur. 208Pb/206Pb"];
+    colNames = rowNames;
+    tableOut = table('Size', [9, 9], 'VariableTypes', repelem("string", 9));
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = colNames;
+
+    for rowrho = 1:9
+        for colrho = 1:9
+
+            if rowrho == colrho % ones on the diagonal
+                tableOut{rowrho, colrho} = "1";
+            elseif rowrho > colrho % lower triangle
+                tableOut{rowrho, colrho} = ...
+                    compose("%1.3f", rhotot(rowrho, colrho));
+            else, tableOut{rowrho, colrho} = "";
+            end % if rowrho == colrho
+
+        end % for colrho
+    end % for rowrho
+    
 end
 
 
