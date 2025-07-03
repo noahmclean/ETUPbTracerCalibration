@@ -9,12 +9,12 @@
 % r75t = 2.960685875948440e-04;
 % r85t = 7.443761622554650e-04;
 
-% assume ET2535 v.3.0 tracer IC
-conc205t = 1.03116*10^-11;
-r45t = 0.000105;
-r65t = 0.000482509449698359;
-r75t = 0.000432369168809505;
-r85t = 0.00104222718281;
+% % assume ET2535 v.3.0 tracer IC
+% conc205t = 1.03116*10^-11;
+% r45t = 0.000105;
+% r65t = 0.000482509449698359;
+% r75t = 0.000432369168809505;
+% r85t = 0.00104222718281;
 
 % r45t = trIC45; % to use if doing blank/tracer IC from 1st principles
 % r65t = trIC65;
@@ -27,8 +27,8 @@ r85t = 0.00104222718281;
 
 %note: don't forget to use the transpose here:
 
-%data = ET535LoadingBlanks';
-data = ET2535LoadingBlanks';
+% data = ET535LoadingBlanks';
+% data = ET2535LoadingBlanks';
 
 n = size(data,2);  %number of blanks measured
 
@@ -134,7 +134,7 @@ end
 
 ncolor = 256; %colorvec = 1:ncolor (step 1)
 jetmat = jet(ncolor);
-colormap(jet(ncolor));
+%colormap(jet(ncolor));
 
 xcolorOfDim = (ncolor-1)/(max(dimsVec)-min(dimsVec))*(dimsVec-min(dimsVec))+1;
 colorV = ones(n,3);
@@ -165,130 +165,64 @@ datameas = dataratios; %these are the fractionation and tracer-corrected blank r
 %% vermeeshcopy3 uses 
 %oldopts = optimset('fsolve');
 
-xs = 0.95*xs;
+% xs = 0.95*xs;
+% 
+% for resoloops = 1:15   %five times is good enough for convergence
+% options = optimset('TolX',10^-20, 'TolFun',10^-20,...
+%     'MaxFunEvals',10^12,'Diagnostics','on', 'MaxIter',50, 'Display', 'on');
+% xs = fsolve(@(S) vermeeshcopy_recalibration(S, n , mu, smallS, datameas), xs, options);
+% %%%%%%%%%%%%xs = fsolve(@(S) vermeeshcopy3(S, n ,mu, smallS, datameas), cov(dataratios')/2000, options);
+% 
+% 
+%     for i = 1:n  %weighted mean, with overdispersion factored in
+%         covmatsrat_inv(:,:,i) = inv(covmatsrat(:,:,i)+xs);
+%         wtdpts(:,i) = covmatsrat_inv(:,:,i)*dataratios(:,i);
+%     end  %make inverse covariance ratios with overdispersion addded
+%     m1 = sum(covmatsrat_inv,3);
+%     m2 = sum(wtdpts,2);
+%     mu = m1\m2;
+% 
+% end
 
-for resoloops = 1:15   %five times is good enough for convergence
-options = optimset('TolX',10^-20, 'TolFun',10^-20,...
-    'MaxFunEvals',10^12,'Diagnostics','on', 'MaxIter',50, 'Display', 'on');
-xs = fsolve(@(S) vermeeshcopy_recalibration(S, n , mu, smallS, datameas), xs, options);
-%%%%%%%%%%%%xs = fsolve(@(S) vermeeshcopy3(S, n ,mu, smallS, datameas), cov(dataratios')/2000, options);
+%% for recalibration: use a more stable overdispersion solver
 
+% set up optimization problem
+options = optimoptions('fmincon', 'Display', 'none', ...
+    'StepTolerance', 1e-10, 'ConstraintTolerance', 1e-10);
+% unknowns vector is:
+% [mu(1), mu(2), mu(3), L(1,1), L(2,1), L(2,2), L(3,1), L(3,2), L(3,3)]
+% Xi = L*L' where mu is mean, Xi is overdispersion covariance matrix (L = chol(Xi))
+% with lower bounds L(1,1) and L(2,2) and L(3,3) > 0 for unique positive definite
+x0 = [18.5, 15.5, 37.5, 0.1, 0, 0.1, 0, 0, 0.1];
+lb = [10, 10, 20, 1e-9, -inf, 1e-9, -inf, -inf, 1e-9];
+ub = [];
+% No linear inequality or equality constraints
+A = []; b = [];
+Aeq = []; beq = [];
+nonlcon = [];
+[x_sol, fval] = fmincon(@(maxLikSoln) ...
+    likelihoodFunction_meanOD(maxLikSoln, dataratios, covmatsrat), ...
+    x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
+mu = x_sol(1:3)'; % best fit mean
+L = [x_sol(4), 0,        0;
+     x_sol(5), x_sol(6), 0;
+     x_sol(7), x_sol(8), x_sol(9)];
+xs = L*L'; % overdispersion covariance matrix
 
-    for i = 1:n  %weighted mean, with overdispersion factored in
-        covmatsrat_inv(:,:,i) = inv(covmatsrat(:,:,i)+xs);
-        wtdpts(:,i) = covmatsrat_inv(:,:,i)*dataratios(:,i);
-    end  %make inverse covariance ratios with overdispersion addded
-    m1 = sum(covmatsrat_inv,3);
-    m2 = sum(wtdpts,2);
-    mu = m1\m2;
-
-end
 
 %%  make data readable
 r64b = mu(1); r74b = mu(2); r84b = mu(3);
 s64b = sqrt(xs(1,1));
 s74b = sqrt(xs(2,2));
 s84b = sqrt(xs(3,3));
-rho6474 = xs(1,2)/sqrt(s64b*s74b);
-rho6484 = xs(1,3)/sqrt(s64b*s84b);
-rho7484 = xs(2,3)/sqrt(s74b*s84b);
+rho6474 = xs(1,2)/(s64b*s74b);
+rho6484 = xs(1,3)/(s64b*s84b);
+rho7484 = xs(2,3)/(s74b*s84b);
 
 disp(['mean ', num2str(r64b,'%2.6f'), ' ', num2str(r74b,'%2.6f'), ' ', num2str(r84b,'%2.6f')])
 disp(['1std  ', num2str(1*s64b,'%2.6f'), '  ', num2str(1*s74b,'%2.6f'), '  ', num2str(1*s84b,'%2.6f')])
 disp(['rhos  ', num2str(rho6474,'%2.6f'), '  ', num2str(rho6484,'%2.6f'), '  ', num2str(rho7484,'%2.6f')])
 disp(' ')
-
-%% plot data with color
-
-alphaVal = 0.8;
-xpadbuf = 0.05;
-xwidthpx = 1200; yheightpx = 650;
-hfig = figure('Position', [15 15 xwidthpx yheightpx]);
-
-ax(1) = subplot(1,2,1, 'FontSize', 12);
-
-stcov = cov(dataratios'); %covariance matrix for discrete blank IC data
-
-hold on
-scatter(dataratios(1,:), dataratios(2,:),'.','k')
-pts = 200;  %number of points in ellipses
-pis = 0:2*pi/(pts-1):2*pi;
-
-%set(gca, 'DataAspectRatio', [1 1 1], 'DataAspectRatioMode', 'manual')
-circlepts = 2*[cos(pis') sin(pis')];   %a 2-column matrix of the points in a circle
-%plot(circlepts(:,1), circlepts(:,2))
-
-for i = 1:n %plot measred data ellipses
-    s = covmatsrat(1:2,1:2,i);
-    sc = chol(s);
-    elpts = circlepts*sc + repmat([dataratios(1,i) dataratios(2,i)], pts, 1);
-    fill(elpts(:,1), elpts(:,2), colorV(i,:), ...
-        'LineWidth', 0.2, 'FaceAlpha', alphaVal)
-    
-end
-
-xsc = chol(xs(1:2, 1:2));  
-bigel = circlepts*xsc + repmat([mu(1) mu(2)], pts, 1);
-plot(bigel(:,1), bigel(:,2), 'g', 'LineWidth', 2) %plot 'overdispersion' ellipse
-stcovc = chol(stcov(1:2,1:2));
-stdel = circlepts*stcovc + repmat([mu(1) mu(2)], pts, 1);
-plot(stdel(:,1), stdel(:,2), 'r', 'LineWidth', 2, 'LineStyle', '--') %plot standard discrete ellipse
-xlabel('$^{206}$ Pb/$^{204}$ Pb', 'FontSize', 14, 'Interpreter', 'latex')
-ylabel('$^{207}$ Pb/$^{204}$ Pb', 'FontSize', 14, 'Interpreter', 'latex')
-xlabh = get(gca,'XLabel'); set(xlabh, 'Units', 'normalized')
-set(xlabh,'Position',get(xlabh,'Position') - [0 xpadbuf 0])
-
-
-hold off
-
-ax(2) = subplot(1,2,2, 'FontSize', 12);  %for 207/204 - 208/204
-
-hold on
-scatter(dataratios(2,:), dataratios(3,:),'.','k')
-pts = 200;
-pis = 0:2*pi/(pts-1):2*pi;
-
-hold on
-set(gca, 'DataAspectRatioMode', 'auto')
-circlepts = 2*[cos(pis') sin(pis')];
-%plot(circlepts(:,1), circlepts(:,2))
-
-for i = 1:n
-    s = covmatsrat(2:3,2:3,i);
-    sc = chol(s);
-    elpts = circlepts*sc + repmat([dataratios(2,i) dataratios(3,i)], pts, 1);
-        fill(elpts(:,1), elpts(:,2), colorV(i,:), ...
-        'LineWidth', 0.2, 'FaceAlpha', alphaVal)
-end
-
-xsc = chol(xs(2:3, 2:3));
-bigel = circlepts*xsc + repmat([mu(2) mu(3)], pts, 1);
-plot(bigel(:,1), bigel(:,2), 'g', 'LineWidth', 2)
-stcovc = chol(stcov(2:3,2:3));
-stdel = circlepts*stcovc + repmat([mu(2) mu(3)], pts, 1);
-plot(stdel(:,1), stdel(:,2), 'r', 'LineWidth', 2, 'LineStyle', '--')
-xlabel('$^{207}$ Pb/$^{204}$ Pb', 'FontSize', 14, 'Interpreter', 'latex')
-xlabh2 = get(ax(2),'XLabel'); set(xlabh2, 'Units', 'normalized')
-set(xlabh2,'Position', get(xlabh2,'Position') - [0 xpadbuf 0])
-ylabel('$^{208}$ Pb/$^{204}$ Pb', 'FontSize', 14, 'Interpreter', 'latex')
-
-% for colorbar
-barwidth = 0.03;
-hcb = colorbar('Location','SouthOutside');
-set(hcb, 'Position', [0.10 0.10 0.815 barwidth])
-for i = 1:2
-    pos = get(ax(i), 'Position');
-    set(ax(i), 'PlotBoxAspectRatio', [1 1 1], ...
-               'Position', [0.45*(i-1) 0.3 0.6 0.6]);
-end
-colormap(jet(ncolor));
-set(hcb,'XTickMode','manual', 'XLim', [0 1], 'XTick', xticLoc, 'XTickLabel', xticLab, ...
-        'Box', 'off', 'TickLength', [barwidth/4 0])
-set(get(hcb, 'title'), 'string', 'Pb blank (pg)', 'FontSize', 12)
-cbIm = findobj(hcb,'Type','image');
-alpha(cbIm,alphaVal)
-%myaa(4)
-%plot2svg('ETICblanks.svg')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function F = vermeeshcopy3(S, n ,mu, smallS, datameas)

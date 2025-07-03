@@ -133,6 +133,40 @@ switch name
 
         end % for colrho
     end % for rowrho
+
+    case "Condon Table 3 ET535Pb"
+
+    trIC = cell2mat(varargin(1));
+    covtrbl = cell2mat(varargin(2));
+    trIC_1s = sqrt(diag(covtrbl(1:4, 1:4)));
+
+    tracerICstrings = [
+        "204Pb/205Pb"
+        "206Pb/205Pb"
+        "207Pb/205Pb"
+        "208Pb/205Pb"
+        "233U/235U"
+        "238U/235U"
+        "conc. 205Pb (mol/g)"
+        "conc. 235U (mol/g)"
+        ];
+    rowNames = [
+        "ET535 " + tracerICstrings
+        "ET2535 202Pb/205Pb"
+        "ET2535 " + tracerICstrings];
+    colNames = ["Value", "±1σ (abs)"];
+    tableOut = table('Size', [17, 2], 'VariableTypes', repelem("string", 2));
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = colNames;
+    
+    tableOut{1, 1} = compose("%1.5f", trIC(1));
+    tableOut{2, 1} = compose("%1.6f", trIC(2));
+    tableOut{3, 1} = compose("%1.6f", trIC(3));
+    tableOut{4, 1} = compose("%1.6f", trIC(4));
+    tableOut{1, 2} = compose("%1.5f", trIC_1s(1));
+    tableOut{2, 2} = compose("%1.6f", trIC_1s(2));
+    tableOut{3, 2} = compose("%1.6f", trIC_1s(3));
+    tableOut{4, 2} = compose("%1.6f", trIC_1s(4));
     
 end
 
