@@ -41,16 +41,20 @@ end
 
 %% Visualize the gammas
 
-figure
+%figure % original code to create figure
+% code here to create figure in ui tabGroupMcLean:
+tabMcLeanFigure3 = uitab(tabGroupMcLean, "Title", "Figure 3");
+ax = axes('Parent', tabMcLeanFigure3);
+
 minv = 0.9985; maxv = 1.0005;
-set(gca, 'DataAspectRatio', [1 1 1], 'PlotBoxAspectRatio', [1 1 1], 'NextPlot', 'add')
-xlim([minv maxv]); ylim([minv maxv]);
-line([minv maxv], [minv maxv], [0 0], 'LineWidth', 2, 'Color', [0.7 0.7 0.7])
-xlabel(gca, '$\gamma_{205}$', 'FontSize', 24, 'Interpreter', 'latex')
-ylabel(gca, '$\gamma_{207}$', 'FontSize', 24, 'Interpreter', 'latex')
+set(ax, 'DataAspectRatio', [1 1 1], 'PlotBoxAspectRatio', [1 1 1], 'NextPlot', 'add')
+xlim(ax, [minv maxv]); ylim(ax, [minv maxv]);
+line(ax, [minv maxv], [minv maxv], [0 0], 'LineWidth', 2, 'Color', [0.7 0.7 0.7])
+xlabel(ax, '$\gamma_{205}$', 'FontSize', 24, 'Interpreter', 'latex')
+ylabel(ax, '$\gamma_{207}$', 'FontSize', 24, 'Interpreter', 'latex')
 
 xytics = [0.9985 0.9990 0.9995 1 1.0005]';
-set(gca,'XTick', xytics, 'YTick', xytics, ...
+set(ax,'XTick', xytics, 'YTick', xytics, ...
     'XTickLabel', num2str(xytics, '%1.4f'), 'YTickLabel', num2str(xytics, '%1.4f'));
 
 g5_981v = (g5start+1):(g5start+runcount981);
@@ -58,9 +62,9 @@ g5_982v = (g5start+runcount981+1):(g5start+runcount981+runcount982);
 g5_Purv = (g5start+runcount981+runcount982+1):g7start;
 
 %plot ellipse centers
-plot(um(g5_981v), um(g5_981v+totruns), '.', 'MarkerEdgeColor', [1 0 0],'MarkerSize', 8)
-plot(um(g5_982v), um(g5_982v+totruns), '.', 'MarkerEdgeColor', [0 1 0],'MarkerSize', 8)
-plot(um(g5_Purv), um(g5_Purv+totruns), '.', 'MarkerEdgeColor', [0 0 1],'MarkerSize', 8)
+plot(ax, um(g5_981v), um(g5_981v+totruns), '.', 'MarkerEdgeColor', [1 0 0],'MarkerSize', 8)
+plot(ax, um(g5_982v), um(g5_982v+totruns), '.', 'MarkerEdgeColor', [0 1 0],'MarkerSize', 8)
+plot(ax, um(g5_Purv), um(g5_Purv+totruns), '.', 'MarkerEdgeColor', [0 0 1],'MarkerSize', 8)
 
 %plot ellipses
 pts = 100;
@@ -80,7 +84,7 @@ for i = g5_981v
               covTot(j,i) covTot(j,j)];
     scT = chol(sub_sT);
     elptsT = circlepts*scT + repmat([um(i) um(j)], pts, 1);
-    plot(elptsT(:,1), elptsT(:,2), 'Color', 'r' , 'LineWidth', 0.2)
+    plot(ax, elptsT(:,1), elptsT(:,2), 'Color', 'r' , 'LineWidth', 0.2)
 end
 
 for i = g5_982v
@@ -96,7 +100,7 @@ for i = g5_982v
               covTot(j,i) covTot(j,j)];
     scT = chol(sub_sT);
     elptsT = circlepts*scT + repmat([um(i) um(j)], pts, 1);
-    plot(elptsT(:,1), elptsT(:,2), 'Color', 'g' , 'LineWidth', 0.2)
+    plot(ax, elptsT(:,1), elptsT(:,2), 'Color', 'g' , 'LineWidth', 0.2)
 end
 
 for i = g5_Purv
@@ -112,11 +116,11 @@ for i = g5_Purv
               covTot(j,i) covTot(j,j)];
     scT = chol(sub_sT);
     elptsT = circlepts*scT + repmat([um(i) um(j)], pts, 1);
-    plot(elptsT(:,1), elptsT(:,2), 'Color', 'b' , 'LineWidth', 0.2)
+    plot(ax, elptsT(:,1), elptsT(:,2), 'Color', 'b' , 'LineWidth', 0.2)
 end
 
 %marker at (1,1)
-plot(1,1,'+','MarkerSize', 20, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k')
+plot(ax, 1,1,'+','MarkerSize', 20, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k')
 
 
 %%  do this after running TarantolaUIC_v1.m (which is MC) and then TarantolaUIC_Mean_v1.m
