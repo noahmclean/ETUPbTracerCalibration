@@ -207,8 +207,65 @@ switch name
 
         end % for colrho
     end % for rowrho
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%
+    case "McLean Table 5 ET535Pb"
     
-end
+    trIC_ET535 = cell2mat(varargin(1));
+    covtrbl_ET535 = cell2mat(varargin(2));
+    mu = cell2mat(varargin(3));    
+    xs = cell2mat(varargin(4)); 
+
+    rowNames = [
+        "ET535 204Pb/205Pb"
+        "ET535 206Pb/205Pb"
+        "ET535 207Pb/205Pb"
+        "ET535 208Pb/205Pb"];
+    colNames = ["ET535 value", "ET535 ±2σ", "ET2535 value",  "ET2535 ±2σ", " ", ...
+        "Pb blank value", "Pb blank ±2σ"];
+
+    tableOut = table('Size', [4, 7], 'VariableTypes', repelem("string", 7));
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = colNames;
+
+    tableOut{:,1} = formatColumn(trIC_ET535, [6, 5, 5, 5]);
+    tableOut{:,2} = formatColumn(2*sqrt(diag(covtrbl_ET535(1:4,1:4))), ...
+                                 [6, 5, 5, 5]);
+    tableOut{:,5} = ["206/204"; "207/204"; "208/204"; " "];
+    tableOut{:,6} = [formatColumn(mu, [2, 2, 2]); " "];
+    tableOut{:,7} = [formatColumn(2*sqrt(diag(xs)), [2, 2, 2]); " "];
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    case "Condon Table 3 ET2535Pb"
+
+    % add ET2535 Pb IC to existing Condon Table 3 table
+    tableOut = cell2table(varargin(1));
+    tableOut = tableOut.('Var1'){1,1}; % not easy to get back from cell!
+    trIC_ET2535 = cell2mat(varargin(2));
+    covtrbl = cell2mat(varargin(3));
+
+    tableOut{10:13,1} = formatColumn(trIC_ET2535, [6, 5, 5, 5]);
+    tableOut{10:13,2} = formatColumn(sqrt(diag(covtrbl(1:4,1:4))), ...
+                        [6, 5, 5, 5]);
+    
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    case "McLean Table 5 ET2535Pb"
+    
+    % add ET2535 Pb IC to existing McLean Table 5 table
+    tableOut = cell2table(varargin(1));
+    tableOut = tableOut.('Var1'){1,1}; % not easy to get back from cell!
+    trIC_ET2535 = cell2mat(varargin(2));
+    covtrbl = cell2mat(varargin(3));
+
+    tableOut{:,3} = formatColumn(trIC_ET2535, [6, 5, 5, 5]);
+    tableOut{:,4} = formatColumn(2*sqrt(diag(covtrbl(1:4,1:4))), ...
+                    [6, 5, 5, 5]);
+
+    
+end % switch name
 
 
 %% Helper functions

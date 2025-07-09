@@ -64,7 +64,7 @@ load Tracer_Blank_Workspace.mat
 % must covert alphaPb measurements from old measurements to new ones
 % needs original and new 208/206 ratio of 981.
 r86_981_old = 2.1681;
-r86_981_new = 2.1658;
+r86_981_new = 2.1681;
 ET535LoadingBlanks(:,1) = ...
     0.5*((1+2*ET535LoadingBlanks(:,1))*r86_981_new/r86_981_old - 1);
 ET2535LoadingBlanks(:,1) = ...
@@ -97,8 +97,6 @@ end % for i_loop
 tabCondonTable3 = uitab(tabGroupCondon, "Title", "Table 3");
 table3Condon = buildTable("Condon Table 3 ET535Pb", ...
     trIC_ET535, covtrbl_ET535);
-uitable(tabCondonTable3, "Data", table3Condon, ...
-    "Units", "normalized", "Position", [0, 0, 1 1]);
 
 % make plot of Blank IC Variability, McLean et al. Figure 6
 BlankIC_ifyouknowtracer_recalibration
@@ -114,3 +112,43 @@ uitable(tabMcLeanTable6, "Data", table6McLean, ...
 
 % Results of linear fit for tracer-blank mixing line, McLean Table 5
 tabMcLeanTable5 = uitab(tabGroupMcLean, "Title", "Table 5");
+
+% First, fill in ET535 and blank IC (determined from ET535 mixes) details
+table5McLean = buildTable("McLean Table 5 ET535Pb", ...
+    trIC_ET535, covtrbl_ET535, mu, xs); 
+
+% Solve for ET2535 Pb minor isotope tracer IC
+
+% % assume ET2535 v.3.0 tracer IC
+conc205t = 1.03116*10^-11;
+r45t = 0.000105;
+r65t = 0.0005; % 0.000482509449698359;
+r75t = 0.0005; % 0.000432369168809505;
+r85t = 0.0010; % 0.00104222718281;
+data = ET2535LoadingBlanks';
+
+% iteratively solve for overdispersion and linear regression
+for i_loop = 1:5
+    BlankIC_ifyouknowtracer_recalibration
+
+    trIC45 = 0.000105;   %starting dist from y-int to tracer
+    BlankIC_LinearRegression_recalibration
+
+    % re-run
+    r45t = trIC45; % to use if doing blank/tracer IC from 1st principles
+    r65t = trIC65;
+    r75t = trIC75;
+    r85t = trIC85;
+end % for i_loop
+
+% Note: Variables have "_ET535" labels but now contain info about ET2535.
+table3Condon = buildTable("Condon Table 3 ET2535Pb", ...
+    table3Condon, trIC_ET535, covtrbl_ET535);
+uitable(tabCondonTable3, "Data", table3Condon, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+
+table5McLean = buildTable("McLean Table 5 ET2535Pb", ...
+    table5McLean, trIC_ET535, covtrbl_ET535);
+uitable(tabMcLeanTable5, "Data", table5McLean, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+
