@@ -16,6 +16,7 @@ end
 
 switch name
 
+    %%%%%%%%%%%%%%%%%%%%%%%
     case "Condon Table 1"
     
     % input arguments: um
@@ -72,7 +73,9 @@ switch name
     tableOut = table(JMM, RPGSC, ET);
     tableOut.Properties.RowNames = rowNames;
     tableOut.Properties.VariableNames = ["JMM", "RP/GSC", "ET"];
+    
 
+    %%%%%%%%%%%%%%%%%%%%%%%%
     case "McLean Table 3"
 
     % input arguments: umMaxLik, twosigmaM, twosigmaT
@@ -101,7 +104,9 @@ switch name
     tableOut.Properties.RowNames = rowNames;
     tableOut.Properties.VariableNames = ...
         ["Wtd. Mean", "±2σᵃ", "±2σᵇ", "n (blocks)"];
+    
 
+    %%%%%%%%%%%%%%%%%%%%%%
     case "McLean Table 4"
     
     rhotot = cell2mat(varargin);
@@ -120,20 +125,21 @@ switch name
     tableOut.Properties.RowNames = rowNames;
     tableOut.Properties.VariableNames = colNames;
 
-    for rowrho = 1:9
-        for colrho = 1:9
+    for irow = 1:9
+        for jcol = 1:9
 
-            if rowrho == colrho % ones on the diagonal
-                tableOut{rowrho, colrho} = "1";
-            elseif rowrho > colrho % lower triangle
-                tableOut{rowrho, colrho} = ...
-                    compose("%1.3f", rhotot(rowrho, colrho));
-            else, tableOut{rowrho, colrho} = "";
+            if irow == jcol % ones on the diagonal
+                tableOut{irow, jcol} = "1";
+            elseif irow > jcol % lower triangle
+                tableOut{irow, jcol} = ...
+                    compose("%1.3f", rhotot(irow, jcol));
+            else, tableOut{irow, jcol} = "";
             end % if rowrho == colrho
 
         end % for colrho
     end % for rowrho
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     case "Condon Table 3 ET535Pb"
 
     trIC = cell2mat(varargin(1));
@@ -167,6 +173,40 @@ switch name
     tableOut{2, 2} = compose("%1.6f", trIC_1s(2));
     tableOut{3, 2} = compose("%1.6f", trIC_1s(3));
     tableOut{4, 2} = compose("%1.6f", trIC_1s(4));
+    
+
+    %%%%%%%%%%%%%%%%%%%%%%
+    case "McLean Table 6"
+    
+    covtrbl = cell2mat(varargin);
+    rowNames = [
+        "ET535 204Pb/205Pb"
+        "ET535 206Pb/205Pb"
+        "ET535 207Pb/205Pb"
+        "ET535 208Pb/205Pb"
+        "blank 206Pb/204Pb"
+        "blank 207Pb/204Pb"
+        "blank 208Pb/204Pb"];
+    colNames = rowNames;
+    tableOut = table('Size', [7, 7], 'VariableTypes', repelem("string", 7));
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = colNames;
+    
+    for irow = 1:7
+        for jcol = 1:7
+
+            if irow == jcol % ones on the diagonal
+                tableOut{irow, jcol} = "1";
+            elseif irow > jcol % lower triangle
+                rhoij = covtrbl(irow,jcol)/...
+                        sqrt(covtrbl(irow,irow)*covtrbl(jcol,jcol));
+                tableOut{irow, jcol} = ...
+                    compose("%1.3f", rhoij);
+            else, tableOut{irow, jcol} = "";
+            end % if rowrho == colrho
+
+        end % for colrho
+    end % for rowrho
     
 end
 

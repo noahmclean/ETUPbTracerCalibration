@@ -12,7 +12,8 @@ gridMcLean = uigridlayout(figMcLean, ...
     "ColumnWidth", {'1x'}, "RowHeight", {'1x'});
 tabGroupMcLean = uitabgroup(gridMcLean);
 
-% 1. load Amelin and Davis (2006) 202-205 spiked 981/982/Puratronic Pb data
+
+%% 1. load Amelin and Davis (2006) 202-205 spiked 981/982/Puratronic Pb data
 load AmelinTarantolaData.mat
 
 % 2. Run inverse problem to solve for ICs of 981, 982, and Puratronic Pb
@@ -54,7 +55,7 @@ uitable(tabMcLeanTable4, "Data", table4McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
 
 
-% 4. Blank and tracer "minor Pb isotope" IC using linear regression with
+%% 4. Blank and tracer "minor Pb isotope" IC using linear regression with
 % overdispersion term to account for Pb blank IC variability
 
 % data from Condon et al supplement "ts05_Tracer-Blank Mixing Line.xls"
@@ -72,9 +73,9 @@ ET2535LoadingBlanks(:,1) = ...
 % initialize ET535 IC for overdispersion calculation
 conc205t = 9.884*10^-12;
 r45t = 9.000000000000000e-05;
-r65t = 6e-4;%3.887398722782950e-04;
-r75t = 6e-4;%2.960685875948440e-04;
-r85t = 9e-4;%7.443761622554650e-04;
+r65t = 6e-4; %3.887398722782950e-04;
+r75t = 6e-4; %2.960685875948440e-04;
+r85t = 9e-4; %7.443761622554650e-04;
 data = ET535LoadingBlanks';
 
 % iteratively solve for overdispersion and linear regression
@@ -105,3 +106,11 @@ BlankIC_ifyouknowtracer_recalibration_plots
 BlankIC_LinearRegression_recalibration
 BlankIC_LinearRegression_recalibration_plots
 
+% Tracer-blank mixing line covariance matrix, McLean Table 6
+tabMcLeanTable6 = uitab(tabGroupMcLean, "Title", "Table 6");
+table6McLean = buildTable("McLean Table 6", covtrbl_ET535);
+uitable(tabMcLeanTable6, "Data", table6McLean, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+
+% Results of linear fit for tracer-blank mixing line, McLean Table 5
+tabMcLeanTable5 = uitab(tabGroupMcLean, "Title", "Table 5");
