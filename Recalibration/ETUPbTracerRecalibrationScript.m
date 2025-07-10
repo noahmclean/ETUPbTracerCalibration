@@ -58,7 +58,7 @@ uitable(tabMcLeanTable4, "Data", table4McLean, ...
 %% 4. Blank and tracer "minor Pb isotope" IC using linear regression with
 % overdispersion term to account for Pb blank IC variability
 
-% data from Condon et al supplement "ts05_Tracer-Blank Mixing Line.xls"
+% 4a. Data from Condon et al supplement "ts05_Tracer-Blank Mixing Line.xls"
 load Tracer_Blank_Workspace.mat
 
 % must covert alphaPb measurements from old measurements to new ones
@@ -70,7 +70,7 @@ ET535LoadingBlanks(:,1) = ...
 ET2535LoadingBlanks(:,1) = ...
     0.5*((1+2*ET2535LoadingBlanks(:,1))*r86_981_new/r86_981_old - 1);
 
-% initialize ET535 IC for overdispersion calculation
+% 4b. Initialize ET535 IC for overdispersion calculation
 conc205t = 9.884*10^-12;
 r45t = 9.000000000000000e-05;
 r65t = 6e-4; %3.887398722782950e-04;
@@ -98,19 +98,19 @@ tabCondonTable3 = uitab(tabGroupCondon, "Title", "Table 3");
 table3Condon = buildTable("Condon Table 3 ET535Pb", ...
     trIC_ET535, covtrbl_ET535);
 
-% make plot of Blank IC Variability, McLean et al. Figure 6
+% 4c. Make plot of Blank IC Variability, McLean et al. Figure 6
 BlankIC_ifyouknowtracer_recalibration
 BlankIC_ifyouknowtracer_recalibration_plots
 BlankIC_LinearRegression_recalibration
 BlankIC_LinearRegression_recalibration_plots
 
-% Tracer-blank mixing line covariance matrix, McLean Table 6
+% 4d. Tracer-blank mixing line covariance matrix, McLean Table 6
 tabMcLeanTable6 = uitab(tabGroupMcLean, "Title", "Table 6");
 table6McLean = buildTable("McLean Table 6", covtrbl_ET535);
 uitable(tabMcLeanTable6, "Data", table6McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
 
-% Results of linear fit for tracer-blank mixing line, McLean Table 5
+% 4e. Results of linear fit for tracer-blank mixing line, McLean Table 5
 tabMcLeanTable5 = uitab(tabGroupMcLean, "Title", "Table 5");
 
 % First, fill in ET535 and blank IC (determined from ET535 mixes) details
@@ -127,7 +127,7 @@ r75t = 0.0005; % 0.000432369168809505;
 r85t = 0.0010; % 0.00104222718281;
 data = ET2535LoadingBlanks';
 
-% iteratively solve for overdispersion and linear regression
+% iteratively solve for overdispersion and linear regression for ET2535
 for i_loop = 1:5
     BlankIC_ifyouknowtracer_recalibration
 
@@ -144,11 +144,40 @@ end % for i_loop
 % Note: Variables have "_ET535" labels but now contain info about ET2535.
 table3Condon = buildTable("Condon Table 3 ET2535Pb", ...
     table3Condon, trIC_ET535, covtrbl_ET535);
-uitable(tabCondonTable3, "Data", table3Condon, ...
-    "Units", "normalized", "Position", [0, 0, 1 1]);
 
 table5McLean = buildTable("McLean Table 5 ET2535Pb", ...
     table5McLean, trIC_ET535, covtrbl_ET535);
 uitable(tabMcLeanTable5, "Data", table5McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
 
+
+%% 5. U Critical mixtures experiment
+
+% 5a. load data: 112a and U500 + ET535. CRM112aAllDataS skips 5 outlier
+% analyses.
+load U_Critical_Mix_Workspace
+
+% 5b. Monte Carlo for systematic uncertainties
+% Option 1: perform MC from scatch, change nM on line 88
+% TarantolaUIC_MC_recalibration
+% or option 2: load data from MCICtolaWithZ
+ummat = readmatrix("MCICtolaWithZ.txt");
+covsys = cov(ummat(:, 1:end-2));
+
+% 5c. Best fit U critical mix solution
+TarantolaUIC_Mean_recalibration
+
+% extract measurement covariance matrix from max likelihood solution
+covmeas = uCM - (uCM*uGn')*((uGn*uCM*uGn'+uCD)\(uGn*uCM));
+covtot = covmeas + covsys;
+
+% McLean, Table 8: U IC of ET(2)535 from critical mixture experiment.
+tabMcLeanTable8 = uitab(tabGroupMcLean, "Title", "Table 8");
+table8McLean = buildTable("McLean Table 8", um, covmeas, covtot);
+uitable(tabMcLeanTable8, "Data", table8McLean, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+
+% Add U IC to Condon Table 3
+table3Condon = buildTable("Condon Table 3 U IC", table3Condon, um, covtot);
+uitable(tabCondonTable3, "Data", table3Condon, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);

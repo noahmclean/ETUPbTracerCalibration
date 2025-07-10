@@ -264,7 +264,46 @@ switch name
     tableOut{:,4} = formatColumn(2*sqrt(diag(covtrbl(1:4,1:4))), ...
                     [6, 5, 5, 5]);
 
+
+    %%%%%%%%%%%%%%%%%%%%%
+    case "McLean Table 8"
+
+    um = cell2mat(varargin(1));
+    covmeas = cell2mat(varargin(2));
+    covtot = cell2mat(varargin(3));
+
+    rowNames = [
+        "233U/235U"
+        "238U/235U"];
+    colNames = ["MLE", "±2σᵃ", "±2σᵇ", "ρᶜ"];
     
+    tableOut = table('Size', [2, 4], 'VariableTypes', repelem("string", 4));
+    tableOut.Properties.RowNames = rowNames;
+    tableOut.Properties.VariableNames = colNames;
+
+    tableOut{:,1} = formatColumn(um(1:2), [6, 8]);
+    tableOut{:,2} = formatColumn(2*sqrt(diag(covmeas(1:2,1:2))), [6, 8]);
+    tableOut{:,3} = formatColumn(2*sqrt(diag(covtot(1:2,1:2))), [5, 8]);
+    tableOut{1,4} = formatColumn(covtot(1,2)/sqrt(covtot(1,1)*covtot(2,2)), 3);
+    tableOut{2,4} = "";
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    case "Condon Table 3 U IC"
+
+    % add U IC to Condon et al. Table 3
+    tableOut = cell2table(varargin(1));
+    tableOut = tableOut.('Var1'){1,1}; % not easy to get back from cell!
+    um = cell2mat(varargin(2));
+    covtot = cell2mat(varargin(3));
+
+    tableOut{5:6,1} = formatColumn(um(1:2), [6, 8]);
+    tableOut{14:15,1} = formatColumn(um(1:2), [6, 8]);
+    tableOut{5,2} = compose("%1.6f", sqrt(covtot(1,1)));
+    tableOut{6,2} = compose("%1.2e", sqrt(covtot(2,2)));
+    tableOut{14,2} = compose("%1.6f", sqrt(covtot(1,1)));
+    tableOut{15,2} = compose("%1.1e", sqrt(covtot(2,2)));
+
 end % switch name
 
 
