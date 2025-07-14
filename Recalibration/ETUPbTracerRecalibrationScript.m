@@ -181,3 +181,12 @@ uitable(tabMcLeanTable8, "Data", table8McLean, ...
 table3Condon = buildTable("Condon Table 3 U IC", table3Condon, um, covtot);
 uitable(tabCondonTable3, "Data", table3Condon, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
+
+
+%% 6. Gravimetric Solution - Tracer Mixtures
+
+% 6a. load in measured data (Pb and U ratios, gravimetric solution name, 
+% is202, mix name, skips)
+load("inverseGT_workspace_DataOnly_v1.mat", 'mix')
+
+% 6b. create MC 
