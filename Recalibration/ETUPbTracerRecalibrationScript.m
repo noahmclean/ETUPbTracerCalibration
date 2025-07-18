@@ -54,6 +54,9 @@ table4McLean = buildTable("McLean Table 4", rhotot(12:20, 12:20));
 uitable(tabMcLeanTable4, "Data", table4McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
 
+% save off values for text06_inverseGravTrac_Setup1_recalibration.m
+ics.gravPb = umMaxLik(12:20)';
+covs.gravPb = covTot(12:20, 12:20);
 
 %% 4. Blank and tracer "minor Pb isotope" IC using linear regression with
 % overdispersion term to account for Pb blank IC variability
@@ -113,9 +116,14 @@ uitable(tabMcLeanTable6, "Data", table6McLean, ...
 % 4e. Results of linear fit for tracer-blank mixing line, McLean Table 5
 tabMcLeanTable5 = uitab(tabGroupMcLean, "Title", "Table 5");
 
-% First, fill in ET535 and blank IC (determined from ET535 mixes) details
+% Fill in ET535 and blank IC (determined from ET535 mixes) details
 table5McLean = buildTable("McLean Table 5 ET535Pb", ...
     trIC_ET535, covtrbl_ET535, mu, xs); 
+
+% Save off data in structrs for use in
+% text06_inverseGravTrac_Setup1_recalibration.m
+ics.ET535Pb = trIC_ET535';
+covs.ET535Pb = covtrbl_ET535(1:4,1:4);
 
 % Solve for ET2535 Pb minor isotope tracer IC
 
@@ -150,6 +158,10 @@ table5McLean = buildTable("McLean Table 5 ET2535Pb", ...
 uitable(tabMcLeanTable5, "Data", table5McLean, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
 
+% Save off data in structs for use in
+% text06_inverseGravTrac_Setup1_recalibration.m
+ics.ET2535Pb = trIC_ET535';
+covs.ET2535Pb = covtrbl_ET535(1:4,1:4);
 
 %% 5. U Critical mixtures experiment
 
@@ -187,6 +199,8 @@ uitable(tabCondonTable3, "Data", table3Condon, ...
 
 % 6a. load in measured data (Pb and U ratios, gravimetric solution name, 
 % is202, mix name, skips)
-load("inverseGT_workspace_DataOnly_v1.mat", 'mix')
+% load("inverseGT_workspace_DataOnly_v1.mat", 'mix')
 
 % 6b. create MC 
+clear masses % left from a previous script
+text06_inverseGravTrac_Setup1_recalibration
