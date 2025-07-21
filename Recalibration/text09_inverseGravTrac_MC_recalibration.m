@@ -11,7 +11,7 @@ count.beadVarRangeU  = [st.rUgt st.rUbt];
 
 tic
 
-for M = 501:620
+for M = 1:100
     
 fm = zeros(n.totalDs,1);
 Gn = zeros(n.totalDs,n.totalMs);
@@ -567,7 +567,7 @@ for iters = 2:n.totIters
 end %iters loop
 
 
-dlmwrite('MCgravtrac1.txt', [um' M], '-append', 'precision', '%12.12g');
+dlmwrite('MCgravtrac_recalibration.txt', [um' M], '-append', 'precision', '%12.12g');
 
 end %for M=2:nM
 

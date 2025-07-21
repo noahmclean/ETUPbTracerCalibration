@@ -62,9 +62,9 @@ ics.r234238_112a = 0.000052841;  %from certificate, for calculating atomic weigh
 %             1.13752586447273e-10	-7.46232285706835e-10	-4.09863440855982e-09	5.12367099628891e-11	-3.67351264059843e-10	-1.91254116026332e-09	1.11072292219590e-10	-7.33633596620360e-10	-4.09778811133240e-09
 %             -7.65600805962120e-10	5.09556619460290e-09	2.78007100836172e-08	-3.47865747381061e-10	2.46152441560095e-09	1.28530163611868e-08	-7.33621039919889e-10	5.39223275748153e-09	2.78105691964427e-08
 %             -4.28947326679123e-09	2.83904679341531e-08	1.55544096103606e-07	-1.94491043244415e-09	1.37851568786728e-08	7.20858854140185e-08	-4.09781957786317e-09	2.78112666107912e-08	1.55397277597425e-07];
-% %NOTE: this matrix is almost symmetric, but not quite.  the following averages the off-diagonal terms, but should 
-% %      look into why covmeas is not perfectly symmetric: likely numerical instability of backslash operator
-% covs.gravPb = (chol(covs.gravPb)'*chol(covs.gravPb) + chol(covs.gravPb')'*chol(covs.gravPb'))/2;
+%NOTE: this matrix is almost symmetric, but not quite.  the following averages the off-diagonal terms, but should 
+%      look into why covmeas is not perfectly symmetric: likely numerical instability of backslash operator
+covs.gravPb = (chol(covs.gravPb)'*chol(covs.gravPb) + chol(covs.gravPb')'*chol(covs.gravPb'))/2;
         
         
 %% from weighing and purity measurements, corrected for buoyancy of air in BuoyancyConsiderations.xlsx
@@ -154,67 +154,67 @@ mixList.JMM = {'ET2535_JMM_MIT_Mix1', 'ET2535_JMM_Mix3', 'ET2535_JMM_Mix4', 'ET2
     'ET535_JMM_W_A', 'ET535_JMM_W_B', 'ET535_JMM_X_A', 'ET535_JMM_X_B' ...
     'ET535_JMM_UNGE_W1', 'ET535_JMM_UNGE_W2', 'ET535_JMM_UNGE_X1'}; 
 
-
-%% 
-nMixes.RP = length(mixList.RP); nMixes.ET = length(mixList.ET); nMixes.JMM = length(mixList.JMM);
-runcount = 0;
-mix.ratios.Pb = []; mix.ratios.U = [];
-for i = 1:nMixes.RP
-runcount = runcount + 1;
-runNamePb = [mixList.RP{i} '_Pb'];
-mdataPb = evalin('base', runNamePb);
-runNameU = [mixList.RP{i} '_U'];
-mdataU = evalin('base', runNameU);
-
-mix.ratios.Pb{i} = mdataPb;
-mix.ratios.U{i} = mdataU;
-mix.gravName{i} = 'RP';
-if mixList.RP{i}(3) == '2';
-    mix.is202(i) = 1;
-else
-    mix.is202(i) = 0;
-end
-
-end %for
-
-for i = 1:nMixes.ET
-runcount = runcount + 1;
-runNamePb = [mixList.ET{i} '_Pb'];
-mdataPb = evalin('base', runNamePb);
-runNameU = [mixList.ET{i} '_U'];
-mdataU = evalin('base', runNameU);
-
-mix.ratios.Pb{runcount} = mdataPb;
-mix.ratios.U{runcount} = mdataU;
-mix.gravName{runcount} = 'ET';
-if mixList.ET{i}(3) == '2';
-    mix.is202(runcount) = 1;
-else
-    mix.is202(runcount) = 0;
-end
-
-end %for
-
-for i = 1:nMixes.JMM
-runcount = runcount + 1;
-runNamePb = [mixList.JMM{i} '_Pb'];
-mdataPb = evalin('base', runNamePb);
-runNameU = [mixList.JMM{i} '_U'];
-mdataU = evalin('base', runNameU);
-
-mix.ratios.Pb{runcount} = mdataPb;
-mix.ratios.U{runcount} = mdataU;
-mix.gravName{runcount} = 'JMM';
-if mixList.JMM{i}(3) == '2';
-    mix.is202(runcount) = 1;
-else
-    mix.is202(runcount) = 0;
-end
-
-end %for
-
-mix.mixList = [mixList.RP mixList.ET mixList.JMM];
-mix.skips = [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0];
+% % NOTE: THIS INFORMATION IMPORTED IN MIX STRUCT FROM inverseGT_workspace_DataOnly_v1.mat
+% % %% 
+% % nMixes.RP = length(mixList.RP); nMixes.ET = length(mixList.ET); nMixes.JMM = length(mixList.JMM);
+% % runcount = 0;
+% % mix.ratios.Pb = []; mix.ratios.U = [];
+% % for i = 1:nMixes.RP
+% % runcount = runcount + 1;
+% % runNamePb = [mixList.RP{i} '_Pb'];
+% % mdataPb = evalin('base', runNamePb);
+% % runNameU = [mixList.RP{i} '_U'];
+% % mdataU = evalin('base', runNameU);
+% % 
+% % mix.ratios.Pb{i} = mdataPb;
+% % mix.ratios.U{i} = mdataU;
+% % mix.gravName{i} = 'RP';
+% % if mixList.RP{i}(3) == '2';
+% %     mix.is202(i) = 1;
+% % else
+% %     mix.is202(i) = 0;
+% % end
+% % 
+% % end %for
+% % 
+% % for i = 1:nMixes.ET
+% % runcount = runcount + 1;
+% % runNamePb = [mixList.ET{i} '_Pb'];
+% % mdataPb = evalin('base', runNamePb);
+% % runNameU = [mixList.ET{i} '_U'];
+% % mdataU = evalin('base', runNameU);
+% % 
+% % mix.ratios.Pb{runcount} = mdataPb;
+% % mix.ratios.U{runcount} = mdataU;
+% % mix.gravName{runcount} = 'ET';
+% % if mixList.ET{i}(3) == '2';
+% %     mix.is202(runcount) = 1;
+% % else
+% %     mix.is202(runcount) = 0;
+% % end
+% % 
+% % end %for
+% % 
+% % for i = 1:nMixes.JMM
+% % runcount = runcount + 1;
+% % runNamePb = [mixList.JMM{i} '_Pb'];
+% % mdataPb = evalin('base', runNamePb);
+% % runNameU = [mixList.JMM{i} '_U'];
+% % mdataU = evalin('base', runNameU);
+% % 
+% % mix.ratios.Pb{runcount} = mdataPb;
+% % mix.ratios.U{runcount} = mdataU;
+% % mix.gravName{runcount} = 'JMM';
+% % if mixList.JMM{i}(3) == '2';
+% %     mix.is202(runcount) = 1;
+% % else
+% %     mix.is202(runcount) = 0;
+% % end
+% % 
+% % end %for
+% % 
+% % mix.mixList = [mixList.RP mixList.ET mixList.JMM];
+% % mix.skips = [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0];
 
 %%
 ics.purity.nbs981 = 0.99999857885;

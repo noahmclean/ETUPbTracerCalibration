@@ -199,8 +199,21 @@ uitable(tabCondonTable3, "Data", table3Condon, ...
 
 % 6a. load in measured data (Pb and U ratios, gravimetric solution name, 
 % is202, mix name, skips)
-% load("inverseGT_workspace_DataOnly_v1.mat", 'mix')
+load inverseGravTracerMixWorkspace_recalibration.mat
 
-% 6b. create MC 
-clear masses % left from a previous script
+% correct beta0
+% beta0 helps construct the model parameter prior. it is implemented as a 
+% linear fractionation factor, despite its name. It can be corrected using
+% the same procedure as in step 4a. Note that this adjustment affects an
+% uninformative prior and should change the solution only negligibly.
+beta0.Pb = 0.5 * ((1 + 2*beta0.Pb) * r86_981_new/r86_981_old - 1);
+
+% 6b. create MC samples of systematic uncertainties, load in data and
+% create priors, also data and prior covariance matrices
+clear masses n count % left from a previous script
+
 text06_inverseGravTrac_Setup1_recalibration
+text07_inverseGravTrac_Setup2_recalibration
+
+% 6c. 
+text08_inverseGravTrac_Mean_recalibration
