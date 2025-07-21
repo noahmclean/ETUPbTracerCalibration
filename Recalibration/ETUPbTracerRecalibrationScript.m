@@ -25,8 +25,6 @@ umMaxLik = um; % save off maximum likelihood model vector
 
 tabCondonTable1 = uitab(tabGroupCondon, "Title", "Table 1");
 table1Condon = buildTable("Condon Table 1", umMaxLik);
-uitable(tabCondonTable1, "Data", table1Condon, ...
-    "Units", "normalized", "Position", [0, 0, 1 1]);
 
 
 % %3a. Perform Monte Carlo uncertainty propagation on the inverse problem, 
@@ -215,5 +213,32 @@ clear masses n count % left from a previous script
 text06_inverseGravTrac_Setup1_recalibration
 text07_inverseGravTrac_Setup2_recalibration
 
-% 6c. 
+% 6c. Solve for tracer 235/205 and 202/205
 text08_inverseGravTrac_Mean_recalibration
+% uncomment below to run Monte Carlo trials
+% text09_inverseGravTrac_MC_recalibration
+
+% 6d. Parse MC results
+parseMCgravtrac_recalibration
+
+% 6e. Calculate 205Pb and 235U concentrations and uncertainties
+% For conc205, use spreadsheet TotalInversionMLEResults_4pub.xlsx 
+% which records the published IC from the original calibration. This mean 
+% value was chosen from a subset of weighed gravimetric-tracer mixtures.
+conc205t = 0.0000000000103116;
+conc205t_1sAbs = 0.000000000000025779;
+
+% create normal distribution with exact mean and stdev from above.
+nM = size(sysVars, 1);
+std_norm_samples = randn(nM,1);
+std_norm_samples = std_norm_samples - mean(std_norm_samples);
+std_norm_samples = std_norm_samples / std(std_norm_samples);
+sysVars(:, 27) = conc205t_1sAbs * std_norm_samples + conc205t;
+sysVars(:, 28) = sysVars(:, 27) .* sysVars(:, 26);
+
+% 6f. Update tables
+table1Condon = buildTable("Condon Table 1 Gravimetric U/Pb", ...
+                table1Condon, sysVars);
+uitable(tabCondonTable1, "Data", table1Condon, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+

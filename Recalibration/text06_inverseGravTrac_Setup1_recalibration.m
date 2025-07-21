@@ -4,6 +4,7 @@
 % first, make M monte carlo simulations of the gravimetric and tracer ICs, as well as the purity and masses for Gravs
 % then use these to calculate M simulations of 206g/238g.  This suite of ICs and 206/238g are used next.
 
+rng('shuffle')
 nM = 10^4;
 nperblock = 20;  %number of analyses per 'block'
 
@@ -112,6 +113,35 @@ MC.massGrav.JMM_Pb = massGrav.JMM_Pb.grams + randn(nM,1)*massGrav.JMM_Pb.sigma;
 MC.massGrav.RP_U  = massGrav.RP_U.grams  + randn(nM,1)*massGrav.RP_U.sigma;
 MC.massGrav.ET_U  = massGrav.ET_U.grams  + randn(nM,1)*massGrav.ET_U.sigma;
 MC.massGrav.JMM_U = massGrav.JMM_U.grams + randn(nM,1)*massGrav.JMM_U.sigma;
+
+
+%% NEW TO RECALIBRATION CODE:
+% Substitute maximum likelihood estimates of all systematic parameters at
+% location M = 1 in MC struct, so that running inverseGravTrac_Mean_recalibration.m 
+% with M = 1 will produce the max likelihood estimate and uGn (G matrix)
+% for estimating measured covariance matrix.
+
+MC.purity.nbs981(1) = ics.purity.nbs981;
+MC.purity.nbs982(1) = ics.purity.nbs982;
+MC.purity.purtnc(1) = ics.purity.purtnc;
+
+MC.ics.ET535Pb(1,:) = ics.ET535Pb;
+MC.ics.ET2535Pb(1,:) = ics.ET2535Pb;
+MC.ics.gtU(1,:) = ics.gtU;
+MC.ics.gravPb(1,:) = ics.gravPb;
+
+MC.purity.CRM112a(1)  = purity.CRM112a.value;
+MC.purity.CRM115(1)   = purity.CRM115.value;
+
+MC.massGrav.RP_Pb(1)  = massGrav.RP_Pb.grams;
+MC.massGrav.ET_Pb(1)  = massGrav.ET_Pb.grams;
+MC.massGrav.JMM_Pb(1) = massGrav.JMM_Pb.grams;
+
+MC.massGrav.RP_U(1)  = massGrav.RP_U.grams;
+MC.massGrav.ET_U(1)  = massGrav.ET_U.grams;
+MC.massGrav.JMM_U(1) = massGrav.JMM_U.grams;
+
+%% Carry on here with original code, calculating r206238g for each grav soln
 
 MC.r206238g.RP = ((MC.massGrav.RP_Pb .* MC.purity.nbs982) ./                                                        ...
  (MC.ics.gravPb(:,4)*masses.Pb204 + masses.Pb206 + MC.ics.gravPb(:,5)*masses.Pb207 + MC.ics.gravPb(:,6)*masses.Pb208))...

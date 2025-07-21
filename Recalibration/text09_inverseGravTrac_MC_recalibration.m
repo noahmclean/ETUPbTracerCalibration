@@ -11,7 +11,7 @@ count.beadVarRangeU  = [st.rUgt st.rUbt];
 
 tic
 
-for M = 1:100
+for M = 101:200
     
 fm = zeros(n.totalDs,1);
 Gn = zeros(n.totalDs,n.totalMs);
