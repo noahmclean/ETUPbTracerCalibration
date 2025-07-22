@@ -319,12 +319,12 @@ switch name
     JMMgrav_86 = mean(1./sysVars(:,24));
     JMMgrav_86_2s = 2*std(1./sysVars(:,24));
     
-    ET_string = [compose("%2.3f", ETgrav_86) + " ± " ...
-                 compose("%1.3f", ETgrav_86_2s)];
-    RP_string = [compose("%2.4f", RPgrav_86) + " ± " ...
-                 compose("%1.4f", RPgrav_86_2s)];
-    JMM_string = [compose("%2.4f", JMMgrav_86) + " ± " ...
-                 compose("%1.4f", JMMgrav_86_2s)];
+    ET_string = compose("%2.3f", ETgrav_86) + " ± " + ...
+                 compose("%1.3f", ETgrav_86_2s);
+    RP_string = compose("%2.4f", RPgrav_86) + " ± " + ...
+                 compose("%1.4f", RPgrav_86_2s);
+    JMM_string = compose("%2.4f", JMMgrav_86) + " ± " + ...
+                 compose("%1.4f", JMMgrav_86_2s);
 
     tableOut{11,1} = JMM_string;
     tableOut{11,2} = RP_string;
@@ -336,6 +336,25 @@ switch name
     % add 235/205 and 202/205, plus conc205 and conc235 to Condon Table 1
     tableOut = cell2table(varargin(1));
     tableOut = tableOut.('Var1'){1,1}; % not easy to get back from cell!
+    sysVars = cell2mat(varargin(2));
+
+    tableOut{7,1}  = compose("%1.4e", mean(sysVars(:,27))); % conc205Pb
+    tableOut{7,2}  = compose("%1.4e", std(sysVars(:,27)));  % conc205Pb ±1s
+    tableOut{8,1}  = compose("%1.4e", mean(sysVars(:,28))); % conc235U
+    tableOut{8,2}  = compose("%1.4e", std(sysVars(:,28)));  % conc235U ±1s
+    tableOut{9,1}  = compose("%1.5f", mean(sysVars(:,25))); % 202/205
+    tableOut{9,2}  = compose("%1.5f", std(sysVars(:,25)));  % 202/205 ±1s
+    tableOut{16,1} = compose("%1.4e", mean(sysVars(:,27))); % conc205Pb
+    tableOut{16,2} = compose("%1.4e", std(sysVars(:,27)));  % conc205Pb ±1s
+    tableOut{17,1} = compose("%1.4e", mean(sysVars(:,28))); % conc235U
+    tableOut{17,2} = compose("%1.4e", std(sysVars(:,28)));  % conc235U ±1s
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    case "McLean Table 9"
+    
+    purity = cell2mat(varargin(1));
+    
     
 
 end % switch name

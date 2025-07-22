@@ -1,4 +1,4 @@
-function [concsM_981, concsM_982, concsM_Pur] = concsM_MC(nM)
+function [concsM_981, concsM_982, concsM_Pur, concsM_983] = concsM_MC(nM)
 %% Create concsM_981 concsM_982 and concsM_Pur variables for
 % ET tracer recalibration. concsM are impurity concentrations in ppb.
 
@@ -15,7 +15,7 @@ relative_path_to_file = fullfile('..', data_folder, file_name);
 
 % ranges for data from Condon et al. supplement xlsx file
 %  ranges for     [NBS 981,  NBS 982,  Puratronic]
-variable_ranges = ["C3:D80", "E3:F80", "I3:J80"];
+variable_ranges = ["C3:D80", "E3:F80", "I3:J80", "G3:H80"];
 
 % for each of the three reference materials:
 for iRM = 1:length(variable_ranges)
@@ -66,6 +66,8 @@ for iRM = 1:length(variable_ranges)
             concsM_982 = MC_impurity;
         case 3
             concsM_Pur = MC_impurity;
+        case 4
+            concsM_983 = MC_impurity;
     end
 
 end % for iRM = 1:nRMs

@@ -189,8 +189,7 @@ uitable(tabMcLeanTable8, "Data", table8McLean, ...
 
 % Add U IC to Condon Table 3
 table3Condon = buildTable("Condon Table 3 U IC", table3Condon, um, covtot);
-uitable(tabCondonTable3, "Data", table3Condon, ...
-    "Units", "normalized", "Position", [0, 0, 1 1]);
+
 
 
 %% 6. Gravimetric Solution - Tracer Mixtures
@@ -241,4 +240,15 @@ table1Condon = buildTable("Condon Table 1 Gravimetric U/Pb", ...
                 table1Condon, sysVars);
 uitable(tabCondonTable1, "Data", table1Condon, ...
     "Units", "normalized", "Position", [0, 0, 1 1]);
+
+table3Condon = buildTable("Condon Table 3 Grav-Trac Results", ...
+                table3Condon, sysVars);
+uitable(tabCondonTable3, "Data", table3Condon, ...
+    "Units", "normalized", "Position", [0, 0, 1 1]);
+
+% % Finish code in buildTable for Table 9, then uncomment below:
+% table9McLean = buildTable("McLean Table 9", ics.purity);
+% tabMcLeanTable9 = uitab(tabGroupMcLean, "Title", "Table 9");
+% uitable(tabMcLeanTable9, "Data", table9McLean, ...
+%     "Units", "normalized", "Position", [0, 0, 1 1]);
 

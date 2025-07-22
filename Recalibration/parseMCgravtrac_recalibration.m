@@ -1,9 +1,9 @@
-data_nm1 = dlmread('MCgravtrac_recalibration.txt');
+data = dlmread('MCgravtrac_recalibration.txt');
 %data_sb1 = dlmread('MCgravtrac1_SDB.txt');
 %data_me1 = dlmread('MCgravtracEddy.txt');
 %data_ab1 = dlmread('MCgravtracAnnie.txt');
 
-allData = [data_nm1']';% data_sb1' data_me1' data_ab1']';
+allData = data; % [data_nm1' data_sb1' data_me1' data_ab1']';
 usedMs = allData(:, n.totalMs+1);
 allData = allData(:,1:(end-1));
 covsys = cov(allData);
@@ -23,7 +23,7 @@ twosigmaAllVars = 2*sqrt(diag(covAll));
 meansAllVars = mean(sysVars)';
 
 
-%% RECALIBRATION: NOT SURE WHY THIS CODE IS HERE
+%% RECALIBRATION: NOT SURE WHY THIS CODE IS HERE, LEFTOVER FROM ORIGINAL
 
 ex.r25m = 1.007525;  ex.r25t = sysVars(:,25); 
 ex.r65m = 0.382;

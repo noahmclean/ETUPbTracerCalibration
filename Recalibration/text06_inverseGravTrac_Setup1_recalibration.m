@@ -9,7 +9,7 @@ nM = 10^4;
 nperblock = 20;  %number of analyses per 'block'
 
 % Monte Carlo ppb impurities from GDMS data in Condon (code not in original publications)
-[concsM_981, concsM_982, concsM_Pur] = concsM_MC(nM);
+[concsM_981, concsM_982, concsM_Pur, concsM_983] = concsM_MC(nM);
 
 %% some constants and measurements
 %masses from Audi et al. AME2003, Nuclear Physics A729 p. 337-676, December 22, 2003.
@@ -94,6 +94,16 @@ purity.CRM112a.value = 1 - 223*10^-6; % http://www.nbl.doe.gov/docs/pdf/CRM_112A
 purity.CRM112a.sigma = 0.00006/2;     % same ref, divided by 2 because it's reported with k=2 coverage factor
 purity.CRM115.value =  0.999770;      %http://pbadupws.nrc.gov/docs/ML0512/ML051220501.pdf
 purity.CRM115.sigma =  0.000046/2;    % same ref, divided by 2 because it's reported with k=2 coverage factor
+
+
+%% mean purities from 10^7 MC trials of concsM_MC()
+
+% note: these values not dynamically reproduced. Run concsM_MC(1e7) and 
+% evaluate means if GDMS data are revised.
+ics.purity.nbs981 = 0.99999857885;
+ics.purity.nbs982 = 0.99997666751;
+ics.purity.purtnc = 0.99998904364;
+ics.purity.nbs983 = 0.99998623374;
 
 %% Make MC trials for systematic parameters, calculate 206g/238g MC realizations
 
@@ -246,8 +256,4 @@ mixList.JMM = {'ET2535_JMM_MIT_Mix1', 'ET2535_JMM_Mix3', 'ET2535_JMM_Mix4', 'ET2
 % % mix.mixList = [mixList.RP mixList.ET mixList.JMM];
 % % mix.skips = [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0];
 
-%%
-ics.purity.nbs981 = 0.99999857885;
-ics.purity.nbs982 = 0.99997666751;
-ics.purity.purtnc = 0.99998904364;
 
